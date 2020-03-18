@@ -6,10 +6,14 @@ idna==2.9
 itsdangerous==1.1.0
 Jinja2==2.11.1
 MarkupSafe==1.1.1
+mysql==0.0.2
+mysql-connector==2.2.9
+mysqlclient==1.4.6
 nltk==3.4.5
 numpy==1.18.1
 oauthlib==3.1.0
 pandas==1.0.2
+PyMySQL==0.9.3
 PySocks==1.7.1
 python-dateutil==2.8.1
 pytz==2019.3
@@ -20,4 +24,3 @@ textblob==0.15.3
 tweepy==3.8.0
 urllib3==1.25.8
 Werkzeug==1.0.0
-gunicorn==19.10.0
