@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html >
+<head>
+	<title>Twitter Sentiment</title>
+	{% include "head.html" %}
+    <body style="background-color:rgb(255,255,255);">
+
+	<section class="menu cid-qWWXqwQEQ7" once="menu" id="menu1-24" >
+        <div class="my-menu" style="background-color:rgb(0,157,250);" >
+            <span class=" logo"><a href="{{url_for('home')}}" class="logo" style="padding-left: 0px">Twitter Sentiment</a></span>   
+         </div>
+     </section>
+    <section class=" cid-qYkSYwjd5G" id="header2-25" style=" padding-top: 20px;padding-bottom: 0px">
+        {% include "search_box.html" %}
+    </section>
+
+    <div class="container site-content">
+    <div>
+        <h2 class="result-for">Results for <span style="color: #FFC133;">{{ word }}</span></h3>
+
+    </div>
+
+      <table class="table" align="center">
+    <thead>
+      <tr>
+        <th scope="row" class="inc" style="color: {{colors[5]}}">Positive</th>
+        <th scope="row" class="inc">Neutral</th>
+        <th scope="row" class="inc" style="color: {{colors[-5]}}">Negative</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td scope="row" class="inc">{{ sentiment['positive'] }}.0%</td>
+        <td scope="row" class="inc">{{ sentiment['neutral'] }}.0%</td>
+        <td scope="row" class="inc">{{ sentiment['negative'] }}.0%</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 class="result-for mygreen"><b>Tweets</b></h3>
+    {% for i in range(length) %}
+    <div class="container p-3 my-3 border" style="background-color: {{ df['color'][i] }}">
+        <div>
+            <a href="https://twitter.com/{{ tweets[i].user }}" target="_blank"><span class="myblue"><b>{{ tweets[i].user}}</b></span></a>
+            <div class="col-lg-4 col-md-12 col-sm-12"></div>
+            <span class="mx-auto"> <i>Polarity : {{ df['polarity'][i] }}<i></span>
+            <span class="float-right" style="font-size: 13px; color: {{ colors[-5] }}">{{ tweets[i].created_at}}</span><br>
+        </div>
+
+        <a href="https://twitter.com/{{ tweets[i].user }}/status/{{ tweets[i].id }}" style="color: black;" target="_blank">
+        {{ tweets[i].text }}</a>
+    </div>
+    {% endfor %}
+
+{% include "footer.html" %}
+{% include "bottom_scripts.html" %}
+</div>
+</body>
+</html>

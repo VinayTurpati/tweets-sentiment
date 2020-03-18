@@ -1,0 +1,10 @@
+__pycache__
+weights
+unused
+sample
+mobirise.com
+*.pyc
+ml_processor.py
+processor.py
+appy.py
+myenv
