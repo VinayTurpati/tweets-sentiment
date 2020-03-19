@@ -17,15 +17,13 @@
     <div class="container site-content">
     <div>
         <h2 class="result-for">Results for <span style="color: #FFC133;">{{ word }}</span></h3>
-
     </div>
-
       <table class="table" align="center">
     <thead>
       <tr>
-        <th scope="row" class="inc" style="color: {{colors[5]}}">Positive</th>
+        <th scope="row" class="inc" style="color: #00B257">Positive</th>
         <th scope="row" class="inc">Neutral</th>
-        <th scope="row" class="inc" style="color: {{colors[-5]}}">Negative</th>
+        <th scope="row" class="inc" style="color: #F64700">Negative</th>
       </tr>
     </thead>
     <tbody>
@@ -36,20 +34,26 @@
       </tr>
     </tbody>
   </table>
-  <h3 class="result-for mygreen"><b>Tweets</b></h3>
+  <h3 class="result-for myblue rubic" style="padding-bottom: 15px"><b>Tweets</b></h3>
     {% for i in range(length) %}
-    <div class="container p-3 my-3 border" style="background-color: {{ df['color'][i] }}">
+    <div class="container p-3 my-3 border" style="background-color: {{ tweets['color'][i] }}">
         <div>
-            <a href="https://twitter.com/{{ tweets[i].user }}" target="_blank"><span class="myblue"><b>{{ tweets[i].user}}</b></span></a>
+            <a href="https://twitter.com/{{ tweets.user[i] }}" target="_blank"><span class="myblue"><b>{{ tweets.user[i]}}</b></span></a>
             <div class="col-lg-4 col-md-12 col-sm-12"></div>
-            <span class="mx-auto"> <i>Polarity : {{ df['polarity'][i] }}<i></span>
-            <span class="float-right" style="font-size: 13px; color: {{ colors[-5] }}">{{ tweets[i].created_at}}</span><br>
+            <span class="mx-auto"> <i>Polarity : {{ tweets['polarity'][i] }}<i></span>
+            <span class="float-right" style="font-size: 13px; color: #F64700">{{ tweets.created_at[i]}}</span><br>
         </div>
 
-        <a href="https://twitter.com/{{ tweets[i].user }}/status/{{ tweets[i].id }}" style="color: black;" target="_blank">
-        {{ tweets[i].text }}</a>
+        <a href="https://twitter.com/{{ tweets.user[i] }}/status/{{ tweets.id[i] }}" style="color: black;" target="_blank">
+        {{ tweets.text[i] }}</a>
     </div>
     {% endfor %}
+
+    <div class="pagination" style="padding-top: 35px">
+        <nav class="navigation pagination" role="navigation" aria-label="Posts">
+            {{ pagination.links }}
+        </nav>
+    </div>
 
 {% include "footer.html" %}
 {% include "bottom_scripts.html" %}

@@ -1,4 +1,4 @@
-# from flask_paginate import Pagination, get_page_parameter, get_page_args
+from flask_paginate import Pagination, get_page_parameter, get_page_args
 from flask import Flask, render_template, request
 # from alchemy import db, Post, app, mail
 # from flask_mail import Message
@@ -29,6 +29,10 @@ def all_rows():
 	cursor.close()
 	return number_of_rows
 
+def get_tweets(tweets_p, offset=0, per_page=5):
+	return tweets_p[offset: offset + per_page]
+
+
 def limit(score):
 	return float("{0:.2f}".format(score))
 
@@ -56,7 +60,8 @@ def collect_tweets(num_tweets, word):
 		search_words += "  -filter:retweets"
 	tweets = tweepy.Cursor(api.search,q=search_words,lang="en").items(num_tweets)
 	users_tweets = [{"id":tweet.id_str, "created_at":tweet.created_at, "text":tweet.text, "user":tweet.user.screen_name, "location":tweet.user.location, "likes":tweet.favorite_count, 'coordinates':tweet.coordinates} for tweet in tweets]
-	return users_tweets 
+
+	return pd.DataFrame(users_tweets) 
 
 colors = {-5:"#F64700", -4: "#FF8800",-3: "#FFAD59",-2: "#FFD19A",-1: "#FFEDDC",0: "#FFFFFF",1: "#EAFAE8",2: "#BEEDBD",3: "#90DF97",4: "#54CB70", 5:"#00B257"}
 
@@ -75,6 +80,9 @@ def tweet_color(score):
 		else:
 			return colors[5]
 
+def sentiment_text(text):
+	return TextBlob(text).sentiment.polarity
+
 app = Flask(__name__)
 
 def csv_json(path):
@@ -85,30 +93,59 @@ def csv_json(path):
 @app.route("/")
 @app.route("/home")
 def home():
-	number_of_rows = all_rows()
-	return render_template('index.html', request= request, total_searches = number_of_rows)
+	number_of_rows = 0#all_rows()
+	key_word = ""
+	num_tweets = 100
+	return render_template('index.html', request= request, total_searches = number_of_rows, word = key_word, num_tweets = num_tweets)
 
 @app.route('/search',methods = ['GET','POST'])
 def search():
-	num_tweets = int(request.args.get('tweets', default = '100'))
-	key_word = request.args.get('word')
-	insert(key_word)
-	all_tweets = collect_tweets(num_tweets, key_word)
+	if request.method == "POST":
+		num_tweets = int(request.form.get('tweets'))#int(request.args.get('tweets', default = '100'))
+		key_word = request.form.get('word')#request.args.get('word')
+		#insert(key_word)
 
-	number_of_rows = all_rows()
-	tweet_polarity = []
-	tweets = pd.DataFrame(all_tweets)['text']
-	for tweet in tweets:
-		tweet_polarity.append(TextBlob(tweet).sentiment.polarity)
+		df = collect_tweets(num_tweets, key_word)
 
-	df = pd.DataFrame(all_tweets)
-	df['polarity'] = pd.Series(tweet_polarity).apply(limit)
+		df['polarity'] = df['text'].apply(sentiment_text).apply(limit)
+		df['get_analysis'] = df['polarity'].apply(get_analysis).values
+		df['color'] = df['polarity'].apply(tweet_color).values
 
-	df['get_analysis'] = df['polarity'].apply(get_analysis).values
-	df['color'] = df['polarity'].apply(tweet_color).values
-	sentiment = {'positive':int(sum(df['get_analysis'] == 'Positive' )*100/len(tweets)), 'negative':int(sum(df['get_analysis'] == 'Negative')*100/len(tweets)), 'neutral':int(sum(df['get_analysis'] == 'Neutral')*100/len(tweets))}
+		positive = int(sum(df['get_analysis'] == 'Positive' )*100/len(df))
+		negative = int(sum(df['get_analysis'] == 'Negative')*100/len(df))
+		neutral  = int(sum(df['get_analysis'] == 'Neutral')*100/len(df))
 
-	return render_template('search.html', tweets = all_tweets, df = df, word = key_word, colors = colors, length = len(all_tweets), sentiment = sentiment, total_searches = number_of_rows)
+		df.to_csv('data.tmp', index=False)
+		with open("temp.tmp",'w') as f:
+			f.seek(0)
+			f.write('{}-+-{}-+-{}-+-{}-+-{}'.format(key_word,num_tweets,positive,negative,neutral))
+
+	else:
+		with open("temp.tmp",'r') as f:
+			temp = f.read().split('-+-')
+			key_word = temp[0]
+			num_tweets = int(temp[1])
+			positive = temp[2]
+			negative = temp[3]
+			neutral = temp[4]
+
+	df = pd.read_csv("data.tmp")
+
+	sentiment = {'positive':positive, 'negative':negative, 'neutral':neutral}
+	number_of_rows = 0#all_rows()
+
+	try:
+		page = int(request.args.get('page'))
+	except:
+		page = 1
+
+	per_page = 10
+	offset = 0
+	pagination_tweets = df[(page-1)*per_page:page*per_page].reset_index(drop=True)
+	pagination = Pagination(page=page, per_page=per_page, total=len(df),css_framework='bootstrap4')
+	print(pagination_tweets)
+	return render_template('search.html', tweets = pagination_tweets, word = key_word, length = len(pagination_tweets), sentiment = sentiment, total_searches = number_of_rows, pagination = pagination, num_tweets = num_tweets)
+
 if __name__ == '__main__':
 	# Threaded option to enable multiple instances for multiple user access support
 	app.run(debug = True,threaded=True, port=2000)

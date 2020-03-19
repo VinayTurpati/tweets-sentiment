@@ -4,6 +4,7 @@ unused
 sample
 mobirise.com
 *.pyc
+*.tmp
 ml_processor.py
 processor.py
 appy.py
