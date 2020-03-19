@@ -93,7 +93,7 @@ def csv_json(path):
 @app.route("/")
 @app.route("/home")
 def home():
-	number_of_rows = 0#all_rows()
+	number_of_rows = all_rows()
 	key_word = ""
 	num_tweets = 100
 	return render_template('index.html', request= request, total_searches = number_of_rows, word = key_word, num_tweets = num_tweets)
@@ -103,7 +103,7 @@ def search():
 	if request.method == "POST":
 		num_tweets = int(request.form.get('tweets'))#int(request.args.get('tweets', default = '100'))
 		key_word = request.form.get('word')#request.args.get('word')
-		#insert(key_word)
+		insert(key_word)
 
 		df = collect_tweets(num_tweets, key_word)
 
@@ -132,7 +132,7 @@ def search():
 	df = pd.read_csv("data.tmp")
 
 	sentiment = {'positive':positive, 'negative':negative, 'neutral':neutral}
-	number_of_rows = 0#all_rows()
+	number_of_rows = all_rows()
 
 	try:
 		page = int(request.args.get('page'))
