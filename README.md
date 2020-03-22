@@ -12,4 +12,6 @@ web application:
 
 	`python main.py`
 
-- Navigate to `localhost:2000`.
+- Navigate to 
+
+	`localhost:2000`.
