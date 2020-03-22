@@ -1,8 +1,8 @@
-API_key = "qo8WJX2YAAzGialk9n6uQSxFQ"
-API_secret_key = "7B2sw1a5oa54WiBMRJaaYipdHyYkwxJdcLiVHQN9LePkSotI6j"
+API_key = "*****"
+API_secret_key = "*****"
 
-access_token = "1236904257581768704-Hq1hD5VnGx9xfwUWBCTYPU8FEtMOPm"
-access_token_secret = "iz30hNnDUZENPnpwRbFxRrMVO6e0CKLreSIHtIC8UD66d"
+access_token = "*****"
+access_token_secret = "****"
 
 num_tweets = 10
 word = "coronavirus"
