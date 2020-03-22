@@ -2,7 +2,7 @@
 
 web application:
 
-[https://sentimenttweets.herokuapp.com/](https://sentimenttweets.herokuapp.com/)
+	[https://sentimenttweets.herokuapp.com/](https://sentimenttweets.herokuapp.com/)
 
 ## Backend
 - Flask
@@ -15,4 +15,4 @@ web application:
 
 - Navigate to 
 
-	`localhost:2000`.
+	`localhost:2000`
