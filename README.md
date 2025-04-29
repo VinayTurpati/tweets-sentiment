@@ -8,10 +8,12 @@ web application:
 - Flask
 
 ## Setup
+- Install dependencies
+	`pip3 install -r requirements.txt`
 
 - Run the application.
 
-	`python main.py`
+	`python3 main.py`
 
 - Navigate to 
 
